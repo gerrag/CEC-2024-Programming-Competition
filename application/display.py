@@ -1,24 +1,9 @@
-
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
-
 import numpy as np
-
-from matplotlib.colors import LinearSegmentedColormap
-
-
 import matplotlib.pyplot as plt
-from matplotlib import colors
-from matplotlib import colormaps
-
-
-import tkinter.font
-
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.colors import LinearSegmentedColormap
 from tkinter import *
-
-import csv
-
-
+import tkinter.font
 
 
 
@@ -168,7 +153,7 @@ class Display:
             if forgetLast: self.canvas.get_tk_widget().pack_forget()
         except:
             pass
-        
+
 
         
         self._update_coords()
@@ -198,16 +183,18 @@ class Display:
 
 
     def _on_preserve_change(self):
-        print("YO PRESERVED " + self.preserve_selected.get())
-
         # update
+        self.preserve_handler(self.preserve_selected.get())
         
-        self.UpdateCanvas()
+        self.UpdateCanvas(self.data)
+
+    def set_presreve_changed_handler(self, handler):
+        self.preserve_handler = handler
+
+
 
     def _on_day_change(self, e):
-        # print("SELECTED DAY " + str(self.day_selected.get()))
-
-        self.UpdateCanvas()
+        self.UpdateCanvas(self.data)
 
     def _set_next_day(self):
         if self.day_selected.get() < 30:
@@ -244,7 +231,7 @@ class Display:
             self.compromisedCount.set(self.compromisedList[2][day-1])
         
     def show(self):
-        self.UpdateCanvas()
+        self.UpdateCanvas(self.data)
         self.root.mainloop()
 
 
@@ -271,6 +258,13 @@ class Display:
 
 
 
+
+
+
+
+# ---------------- TEST FUNCTION ERASE ----------------
+import csv  # erase me
+
 def simpleGetArray(path):
     reader = csv.reader(open(path), delimiter=",")
 
@@ -291,7 +285,6 @@ def simpleGetArray(path):
 
 
 
-
 basepath = "C:/Users/cepag/Documents/School/Uni/Competitions/Engineering Competition/CEC 2024/CEC-2024-Programming-Competition/data/"
 world_path = "world_array_data_day_"
 algal_path = "algal_data_day_"
@@ -301,11 +294,17 @@ algal_path = "algal_data_day_"
 def test():
     app = Display()
     
-
-    data = simpleGetArray(basepath + world_path + "1.csv") # ----------- INSERT DATA
+    # Set data (x,y) grid of land (1 land, 0 water)
+    data = simpleGetArray(basepath + world_path + "1.csv")
     app.UpdateCanvas(data)
+
+    # Set preserved button changed handler
+    def handler(preserving):
+        print("handled! type " + preserving)
     
-    # list of rig1 list and rig2 list
+    app.set_presreve_changed_handler(handler)
+    
+    # list of rig1 list and rig2 list for every day
     app.setRigCoords([[(1,1),(2,2),(3,3),(4,4)],
                       [(50,1),(50,2),(50,3),(50,4)]])
     
