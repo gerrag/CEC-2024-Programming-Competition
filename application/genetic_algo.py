@@ -27,6 +27,7 @@ ELITE_PERCENT = 20 # % of individuals with the highest scores who survive
 PARENT_PERCENT = 50 # % of individuals with the highest scores who mate
 MUTATION_PROBABILITY = 10 # % chance of each individual mutating
 MUTATIONS = 3 # number of coords in the individual which are mutated
+NUM_DAYS = 30 # number of days to consider
 
 #------------------------------------------------------------------------------
 # GLOBAL VARIABLES
@@ -72,6 +73,76 @@ def mutate(individual):
 def create_child(parent_1, parent_2):
 
     return
+
+# description: get the valid moves a rig can take from a coordinate
+# coord: the coordinate that the rig is currently situated
+# return: list of valid coordinate moves represented as tuples
+def valid_moves(coord):
+    valid_moves_list = []
+
+    for i in range(-5,6):
+        for j in range(-5,6):
+            valid_moves_list.append((coord[0] + i, coord[1] + j))
+
+    for move in valid_moves_list:
+        if (not valid_movement(coord, move)):
+            valid_movement.remove(move)
+
+    return valid_moves_list
+
+# description: check if the rig can move from one coordinate to another
+# note: this function search space is incomplete, to prevent exponential search
+# start_coord: the coordinate that the rig is currently situated
+# end_coord: the coordinate that the rig will finish at
+# return: boolean describing if movement is valid
+def valid_movement(start_coord, end_coord):
+    current_coord = start_coord
+
+    for _ in range(5):
+        valid_one_unit_moves_list = valid_one_unit_moves(current_coord)
+        index_min = 0
+        distance_min = 100 # arbitrarily large value
+        for index, move in enumerate(valid_one_unit_moves_list):
+            total_distance_val = total_distance(move, end_coord)
+            if total_distance_val < distance_min:
+                distance_min = total_distance_val
+                index_min = index
+        current_coord = valid_one_unit_moves_list[index_min]
+        if (current_coord == end_coord):
+            return True
+        
+    return False
+
+# description: get the total distance between 2 coordinates represented as an int
+# start_coord: the coordinate that the rig is currently situated
+# end_coord: the coordinate that the rig will finish at
+# return: integer describing the total distance
+def total_distance(start_coord, end_coord):
+    x_distance = abs(start_coord[0] - end_coord[0])
+    y_distance = abs(start_coord[1] - end_coord[1])
+    return x_distance + y_distance
+
+# description: get the valid one unit moves a rig can take from a coordinate
+# coord: the coordinate that the rig is currently situated
+# return: list of valid coordinate moves represented as tuples
+def valid_one_unit_moves(coord):
+    valid_one_unit_moves_list = []
+
+    for i in range(-1,2):
+        for j in range(-1,2):
+            valid_one_unit_moves_list.append((coord[0] + i, coord[1] + j))
+
+    for move in valid_one_unit_moves_list:
+        if ((not is_water(move)) or (not on_map(move))):
+            valid_one_unit_moves_list.remove(move)
+
+    return valid_one_unit_moves_list
+
+# description: check if a coordinate is water
+# coord: the coordinate to check
+# return: boolean describing if the coordinate is water
+def is_water(coord):
+    return (preserve_normalized_dataset[0][coord[1]][coord[0]] != -1)
 
 # description: perform the genetic algorithm
 # return: the individual with the highest fitness
