@@ -82,14 +82,27 @@ def new_individual():
 # individual: the individual to be fit checked
 # return: the fitness score of the individual
 def calculate_fitness(individual):
+    fitness = 0
 
-    return
+    for i in range (NUM_DAYS):
+        rig_1_helium = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
+        rig_2_helium = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
+        rig_1_metal = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
+        rig_2_metal = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
+        rig_1_oil = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
+        rig_2_oil = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
+        rig_1_resources = rig_1_helium + rig_1_metal + rig_1_oil
+        rig_2_resources = rig_2_helium + rig_2_metal + rig_2_oil
+        rig_1_preservation_destruction = preserve_normalized_dataset[i][individual[0][i][1]][individual[0][i][0]]
+        rig_2_preservation_destruction = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
+        fitness += rig_1_resources + rig_2_resources - 3*rig_1_preservation_destruction - 3*rig_2_preservation_destruction
+
+    return fitness
 
 # description: mutate an individual, a MUTATIONS number of times
 # individual: the individual to be mutated
 # Modifies the original individual object
 def mutate(individual):
-
   # Create [MUTATIONS] number of mutations
   for i in range(MUTATIONS):
     # Select a random position to mutate
