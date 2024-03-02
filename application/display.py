@@ -171,15 +171,19 @@ class Display:
         plt.plot(int(self.rig_one_coords[0]),int(self.rig_one_coords[1]),'ro') 
         plt.plot(int(self.rig_two_coords[0]),int(self.rig_one_coords[1]),'rx') 
         
-        # self.rig_one_coords = (random.randint(1, 99), random.randint(1, 99))
-        # self.rig_two_coords = (random.randint(1, 99), random.randint(1, 99))
         
 
         self.canvas = FigureCanvasTkAgg(fig, master=self.root)  # A tk.DrawingArea.
         # self.canvas.get_tk_widget().config()
         self.canvas.get_tk_widget().pack(side=LEFT, fill=BOTH, expand=0)
 
-        
+    
+    def SetOverlay(self, overlay):
+        for row in enumerate(overlay):
+            for val in row:
+                if val != None:
+                    self.data = overlay
+    
 
 
     def _on_preserve_change(self):
