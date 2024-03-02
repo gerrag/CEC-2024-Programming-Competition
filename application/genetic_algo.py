@@ -15,6 +15,7 @@
 # IMPORTS
 #------------------------------------------------------------------------------
 import random
+import math
 
 #------------------------------------------------------------------------------
 # PARAMETERS
@@ -108,12 +109,6 @@ def mutate(individual):
           if(len(valid_positions) == 0):
             break
 
-# description: determines if the given coordinate is placed on the map
-# coord: a tuple representing the coordinates
-# returns a boolean value
-def on_map(coord):
-   return coord[0] < 100 and coord[0] >= 0 and coord[1] < 100 and coord[1] >= 0
-
 # description: create a child individual by mating 2 individuals 
 # parent_1: an individual which will mate with parent_2
 # parent_2: an individual which will mate with parent_1
@@ -162,13 +157,20 @@ def valid_movement(start_coord, end_coord):
     return False
 
 # description: get the total distance between 2 coordinates represented as an int
-# start_coord: the coordinate that the rig is currently situated
-# end_coord: the coordinate that the rig will finish at
+# coord_1: coordinate 1
+# coord_2: coordinate 2
 # return: integer describing the total distance
-def total_distance(start_coord, end_coord):
-    x_distance = abs(start_coord[0] - end_coord[0])
-    y_distance = abs(start_coord[1] - end_coord[1])
-    return x_distance + y_distance
+def total_distance(coord_1, coord_2):
+    x_distance = abs(coord_1[0] - coord_2[0])
+    y_distance = abs(coord_1[1] - coord_2[1])
+    return math.sqrt((x_distance^2) + (y_distance^2))
+
+# description: checks if the 2 rigs are far enough apart from another
+# rig_coord_1: the coordinate that rig 1 is situated at
+# rig_coord_2: the coordinate that rig 2 is situated at
+# return: boolean describing if the rigs are far enough apart from another
+def valid_proximity(rig_coord_1, rig_coord_2):
+    return total_distance(rig_coord_1, rig_coord_2) > (2 * math.sqrt(2))
 
 # description: get the valid one unit moves a rig can take from a coordinate
 # coord: the coordinate that the rig is currently situated
@@ -191,6 +193,12 @@ def valid_one_unit_moves(coord):
 # return: boolean describing if the coordinate is water
 def is_water(coord):
     return (preserve_normalized_dataset[0][coord[1]][coord[0]] != -1)
+
+# description: determines if the given coordinate is placed on the map
+# coord: a tuple representing the coordinates
+# return: boolean describing if the coordinate is on the map
+def on_map(coord):
+   return coord[0] < 100 and coord[0] >= 0 and coord[1] < 100 and coord[1] >= 0
 
 # description: perform the genetic algorithm
 # return: the individual with the highest fitness
