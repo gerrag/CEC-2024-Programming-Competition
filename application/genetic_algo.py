@@ -19,6 +19,7 @@ import random
 #------------------------------------------------------------------------------
 # PARAMETERS
 #------------------------------------------------------------------------------
+DEBUG_OUTPUT_FILE = "debug_output.txt"
 RANDOM_SEED = 42 # RNG seed
 POPULATION_SIZE = 30 # number of individuals in the population
 GENERATIONS = 100 # number of computed generations
@@ -30,16 +31,12 @@ MUTATIONS = 3 # number of coords in the individual which are mutated
 #------------------------------------------------------------------------------
 # GLOBAL VARIABLES
 #------------------------------------------------------------------------------
-algal_normalization_factor = 0 # normalization factor for the algal dataset
-coral_normalization_factor = 0 # normalization factor for the coral dataset
-species_normalization_factor = 0 # normalization factor for the species dataset
-helium_normalization_factor = 0 # normalization factor for the helium dataset
-metal_normalization_factor = 0 # normalization factor for the metal dataset
-oil_normalization_factor = 0 # normalization factor for the oil dataset
+preserve_normalization_factor = 0 # preserved dataset normalization factor
+helium_normalization_factor = 0 # helium dataset normalization factor
+metal_normalization_factor = 0 # metal dataset normalization factor
+oil_normalization_factor = 0 # oil dataset normalization factor
 
-algal_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
-coral_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
-species_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
+preserve_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
 helium_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
 metal_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
 oil_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
@@ -79,4 +76,45 @@ def create_child(parent_1, parent_2):
 # description: perform the genetic algorithm
 # return: the individual with the highest fitness
 if __name__ == "__main__":
-    print("si si si")
+    random.seed(RANDOM_SEED)
+
+    debug_output_file = open(DEBUG_OUTPUT_FILE, "w")
+    
+    # TODO: Call Abraham's Data init functions based on selected preserve
+
+    # init the population
+    population = []
+    for _ in range(POPULATION_SIZE):
+        population.append(new_individual())
+
+    # perform the genetic algorithm
+    for i_generation in range(GENERATIONS):
+        next_generation = []
+    
+        # sort the population based on fitness levels
+        population = sorted(population, key=calculate_fitness)
+
+        # write output data for the current generation to the debug output file
+        debug_output_file.write("POPULATION: Generation " + str(i_generation) + "\n")
+        for i in range(POPULATION_SIZE):
+            fitness = calculate_fitness(population[i])
+            debug_output_file.write(str(i) + ". " + str(fitness) + "\n")
+    
+        # carry on top percent of individuals with the best fitness
+        # this value is always rounded down to the nearest individual
+        cutoff_index = int((ELITE_PERCENT/100)*POPULATION_SIZE)
+        next_generation += population[0:cutoff_index]
+
+        # breed the rest of the population using eligible bachelors
+        parent_cutoff_index = int((PARENT_PERCENT/100)*POPULATION_SIZE)
+        parent_population = population[0:parent_cutoff_index]
+        for _ in range(POPULATION_SIZE - cutoff_index):
+            parent_1, parent_2 = random.sample(parent_population, 2)
+            next_generation.append(create_child(parent_1, parent_2))
+
+        # randomly mutate the new population
+        for individual in next_generation:
+            if random.random() < MUTATION_PROBABILITY/100:
+                mutate(individual)
+
+        population = next_generation
