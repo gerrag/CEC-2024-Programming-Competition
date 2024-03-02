@@ -50,8 +50,33 @@ oil_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
 # description: create a random new individual
 # return: the new individual
 def new_individual():
+    individual = [[],[]]
 
-    return
+    rig_1_move = (random.randint(0,99), random.randint(0,99))
+    rig_2_move = (random.randint(0,99), random.randint(0,99))
+
+    while (not valid_proximity(rig_1_move, rig_2_move)):
+        rig_2_move = (random.randint(0,99), random.randint(0,99))
+
+    individual[0].append(rig_1_move)
+    individual[1].append(rig_2_move)
+
+    for i in range(NUM_DAYS):
+        rig_1_moves = valid_moves(individual[0][i])
+        rig_2_moves = valid_moves(individual[1][i])
+
+        rig_1_move = random.choice(rig_1_moves)
+        rig_2_move = random.choice(rig_2_moves)
+        rig_2_moves.remove(rig_2_move)
+
+        while (not valid_proximity(rig_1_move, rig_2_move)):
+            rig_2_move = random.choice(rig_2_moves)
+            rig_2_moves.remove(rig_2_move)
+
+        individual[0].append(rig_1_move)
+        individual[1].append(rig_2_move)
+
+    return individual
 
 # description: calculate the fitness score of an individual
 # individual: the individual to be fit checked
