@@ -24,12 +24,12 @@ import interpreter
 #------------------------------------------------------------------------------
 DEBUG_OUTPUT_FILE = "debug_output.txt"
 RANDOM_SEED = 42 # RNG seed
-POPULATION_SIZE = 30 # number of individuals in the population
+POPULATION_SIZE = 100 # number of individuals in the population
 GENERATIONS = 100 # number of computed generations
-ELITE_PERCENT = 20 # % of individuals with the highest scores who survive
-PARENT_PERCENT = 50 # % of individuals with the highest scores who mate
-MUTATION_PROBABILITY = 10 # % chance of each individual mutating
-MUTATIONS = 3 # number of coords in the individual which are mutated
+ELITE_PERCENT = 15 # % of individuals with the highest scores who survive
+PARENT_PERCENT = 60 # % of individuals with the highest scores who mate
+MUTATION_PROBABILITY = 15 # % chance of each individual mutating
+MUTATIONS = 4 # number of coords in the individual which are mutated
 NUM_DAYS = 30 # number of days to consider
 
 #------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ def new_individual():
     individual[0].append(rig_1_move)
     individual[1].append(rig_2_move)
 
-    for i in range(NUM_DAYS):
+    for i in range(NUM_DAYS - 1):
         rig_1_moves = valid_moves(individual[0][i])
         rig_2_moves = valid_moves(individual[1][i])
 
@@ -95,12 +95,12 @@ def calculate_fitness(individual):
     fitness = 0
 
     for i in range (NUM_DAYS):
-        rig_1_helium = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
-        rig_2_helium = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
-        rig_1_metal = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
-        rig_2_metal = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
-        rig_1_oil = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
-        rig_2_oil = preserve_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
+        rig_1_helium = helium_normalized_dataset[i][individual[0][i][1]][individual[0][i][0]]
+        rig_2_helium = helium_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
+        rig_1_metal = metal_normalization_factor[i][individual[0][i][1]][individual[0][i][0]]
+        rig_2_metal = metal_normalization_factor[i][individual[1][i][1]][individual[1][i][0]]
+        rig_1_oil = oil_normalized_dataset[i][individual[0][i][1]][individual[0][i][0]]
+        rig_2_oil = oil_normalized_dataset[i][individual[1][i][1]][individual[1][i][0]]
         rig_1_resources = rig_1_helium + rig_1_metal + rig_1_oil
         rig_2_resources = rig_2_helium + rig_2_metal + rig_2_oil
         rig_1_preservation_destruction = preserve_normalized_dataset[i][individual[0][i][1]][individual[0][i][0]]
@@ -113,49 +113,49 @@ def calculate_fitness(individual):
 # individual: the individual to be mutated
 # Modifies the original individual object
 def mutate(individual):
-  # Create [MUTATIONS] number of mutations
-  for i in range(MUTATIONS):
-    # Select a random position to mutate
-    positions = 2 * len(individual[0])
-    mut_position = random.randrange(positions)
+    # Create [MUTATIONS] number of mutations
+    for i in range(MUTATIONS):
+        # Select a random position to mutate
+        positions = 2 * NUM_DAYS
+        mut_position = random.randrange(positions)
 
-    valid_positions = []
-    rig = -1
+        valid_positions = []
+        rig = -1
 
-    # Determine rig getting changed
-    if mut_position < len(individual[0]):
-      rig = 0
-    else:
-      rig = 1
+        # Determine rig getting changed
+        if mut_position < NUM_DAYS:
+            rig = 0
+        else:
+            rig = 1
 
-    # Determine valid positions
-    mut_position = mut_position % len(individual[rig])
-    if mut_position == 0:
-      valid_positions = valid_moves(individual[rig][1])
-    elif mut_position:
-      valid_positions = valid_moves(individual[rig][28])
-    else:
-      valid_positions = []
-      start = individual[rig][mut_position-1]
-      dest = individual[rig][mut_position+1]
+        # Determine valid positions
+        mut_position = mut_position % NUM_DAYS
+        if mut_position == 0:
+            valid_positions = valid_moves(individual[rig][1])
+        elif mut_position == 29:
+            valid_positions = valid_moves(individual[rig][28])
+        else:
+            valid_positions = []
+            start = individual[rig][mut_position-1]
+            dest = individual[rig][mut_position+1]
 
-      for x in range(min(start[0], dest[0]), max(start[0], dest[0])):
-        for y in range(min(start[1], dest[1]), max(start[1], dest[1])):
-          valid_positions.append((x,y))
+            for x in range(min(start[0], dest[0]), max(start[0], dest[0]) + 1):
+                for y in range(min(start[1], dest[1]), max(start[1], dest[1]) + 1):
+                    valid_positions.append((x,y))
     
-    # attempt to mutate the individual
-    # this may fail, resulting in a mutation that stays the same
-    while True:
-      new_pos = random.randrange(len(valid_positions))
-      new_tuple = valid_positions[new_pos]
+        # attempt to mutate the individual
+        # this may fail, resulting in a mutation that stays the same
+        while True:
+            new_pos = random.randrange(len(valid_positions))
+            new_tuple = valid_positions[new_pos]
 
-      if on_map(new_tuple) and is_water(new_tuple) and valid_positions(start, new_tuple) and valid_positions(new_tuple, dest):
-          individual[0][mut_position] = new_tuple
-          break
-      else:
-          valid_positions.pop(new_pos)
-          if(len(valid_positions) == 0):
-            break
+            if on_map(new_tuple) and is_water(new_tuple) and valid_proximity(new_tuple, individual[1 if (rig == 0) else 0][mut_position]) and valid_movement(start, new_tuple) and valid_movement(new_tuple, dest):
+                individual[0][mut_position] = new_tuple
+                break
+            else:
+                valid_positions.pop(new_pos)
+                if(len(valid_positions) == 0):
+                    break
 
 # description: create a child individual by mating 2 individuals 
 # parent_1: an individual which will mate with parent_2
@@ -173,19 +173,19 @@ def create_child(parent_1, parent_2):
 
         # Validate that the chosen combination is valid
         valid_comb = True
-        for i in range(len(parent_1[0])):
+        for i in range(NUM_DAYS):
             if(not valid_proximity(parent_1[chosen_comb[0]][i], parent_2[chosen_comb[1]][i])):
                 valid_comb = False
                 break
         
         # If valid, create child
         if valid_comb:
-            new_child[0] = parent_1[child_combs[0]].copy()
-            new_child[1] = parent_2[child_combs[1]].copy()
+            new_child[0] = parent_1[chosen_comb[0]].copy()
+            new_child[1] = parent_2[chosen_comb[1]].copy()
             break
         # If no other combinations, return one of the parents at random
-        elif len(chosen_comb) == 0:
-            if random.randint(0,1) == 0:
+        elif len(child_combs) == 0:
+            if random.choice([True, False]):
                 new_child = parent_1
             else:
                 new_child = parent_2
@@ -206,7 +206,7 @@ def valid_moves(coord):
 
     for move in valid_moves_list:
         if (not valid_movement(coord, move)):
-            valid_movement.remove(move)
+            valid_moves_list.remove(move)
 
     return valid_moves_list
 
@@ -275,7 +275,7 @@ def is_water(coord):
 # coord: a tuple representing the coordinates
 # return: boolean describing if the coordinate is on the map
 def on_map(coord):
-   return coord[0] < 100 and coord[0] >= 0 and coord[1] < 100 and coord[1] >= 0
+    return coord[0] < 100 and coord[0] >= 0 and coord[1] < 100 and coord[1] >= 0
 
 # description: perform the genetic algorithm
 # return: the individual with the highest fitness
