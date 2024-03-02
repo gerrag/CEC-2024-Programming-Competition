@@ -17,6 +17,8 @@
 import random
 import math
 
+import interpreter
+
 #------------------------------------------------------------------------------
 # PARAMETERS
 #------------------------------------------------------------------------------
@@ -38,10 +40,18 @@ helium_normalization_factor = 0 # helium dataset normalization factor
 metal_normalization_factor = 0 # metal dataset normalization factor
 oil_normalization_factor = 0 # oil dataset normalization factor
 
-preserve_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
-helium_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
-metal_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
-oil_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
+preserve_normalized_dataset = interpreter.multiInterpreter("algal") # TODO: CHANGE THIS TO THE SELECTED PRESERVATION TYPE ON GUI
+preserve_min = interpreter.MIN_VALUE
+preserve_max = interpreter.MAX_VALUE
+helium_normalized_dataset = interpreter.multiInterpreter("helium") # helium dataframe
+helium_min = interpreter.MIN_VALUE
+helium_max = interpreter.MAX_VALUE
+metal_normalized_dataset = interpreter.multiInterpreter("metal") # metal dataframe
+metal_min = interpreter.MIN_VALUE
+metal_max = interpreter.MAX_VALUE
+oil_normalized_dataset = interpreter.multiInterpreter("oil") # oil dataframe
+oil_min = interpreter.MIN_VALUE
+oil_max = interpreter.MAX_VALUE
 
 #------------------------------------------------------------------------------
 # FUNCTIONS

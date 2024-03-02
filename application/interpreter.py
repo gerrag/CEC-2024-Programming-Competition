@@ -115,8 +115,6 @@ def multiInterpreter(data_file):
 
     return dataframe
 
-def main(input):
+if __name__ == "__main__":
 
     multiInterpreter(input)
-
-main("TO INTEGRATE WITH ALGORITHM")
