@@ -18,7 +18,8 @@ class Display:
         # Initialize window
         self.root = Tk()
         self.root.geometry("1000x600")
-        self.root.wm_title("Hector Analysis")
+        self.root.title("Hector Analysis")
+        self.root.iconbitmap("/assets/mount_icon.ico")
 
         self.data = []
     
