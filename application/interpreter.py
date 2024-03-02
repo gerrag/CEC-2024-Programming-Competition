@@ -10,7 +10,6 @@
 import numpy as np
 import csv
 import os
-from matplotlib import pyplot as plt
 
 #GLOBAL VARIABLES
 MAX_VALUE = float('-inf')
@@ -113,9 +112,8 @@ def multiInterpreter(data_file):
                 if value != -1:
                     dataframe[i][j][k] = (value - MIN_VALUE)/difference
 
-        plt.imshow(dataframe[i], cmap='hot', interpolation='nearest')
-        plt.show()
-    #return dataframe
+
+    return dataframe
 
 def main(input):
 
