@@ -10,7 +10,6 @@
 import numpy as np
 import csv
 import os
-from matplotlib import pyplot as plt
 
 #GLOBAL VARIABLES
 MAX_VALUE = float('-inf')
