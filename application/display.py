@@ -20,9 +20,6 @@ import csv
 
 
 
-basepath = "C:/Users/cepag/Documents/School/Uni/Competitions/Engineering Competition/CEC 2024/CEC-2024-Programming-Competition/data/"
-world_path = "world_array_data_day_"
-algal_path = "algal_data_day_"
 
 
 
@@ -36,6 +33,8 @@ class Display:
         # Initialize window
         self.root = Tk()
         self.root.wm_title("Hector Analysis")
+
+        self.data = []
     
         
         self.TITLE_FONT = tkinter.font.Font(size=20, weight="bold") #tkinter.font.Font(family="Arial", size=20, weight="bold")
@@ -72,7 +71,7 @@ class Display:
         self.compromisedCount = IntVar()
 
         # Initialize Canvas
-        self.UpdateCanvas(forgetLast=False)
+        # self.UpdateCanvas(forgetLast=False)
 
         # ----------------------- Initialize Interface -----------------------
         self.interface = Frame(master=self.root)
@@ -164,19 +163,23 @@ class Display:
         self.metrics.pack(side=tkinter.RIGHT, expand=0, padx=10, pady=5)
         self.interface.pack(side=tkinter.RIGHT, expand=10, padx=10, pady=5)
 
-    def UpdateCanvas(self, forgetLast = True):
-        if forgetLast: self.canvas.get_tk_widget().pack_forget()
+    def UpdateCanvas(self, data, forgetLast = True):
+        try:
+            if forgetLast: self.canvas.get_tk_widget().pack_forget()
+        except:
+            pass
+        
+
         
         self._update_coords()
         self._update_metrics()
 
-        # UPDATE FUNCTION TO READ IN DATA FROM INPUT?
-        data = simpleGetArray(basepath + world_path + str(self.day_selected.get()) + ".csv") # ----------- INSERT DATA
+        self.data = data
         
         fig, ax = plt.subplots()
         # ax.imshow(data, cmap=colormaps.get('cividis'))
         cmap = LinearSegmentedColormap.from_list('', [(0.1725,0.1725,0.6980), (0.8235,0.7804,0.5412)])
-        ax.imshow(data, cmap=cmap)
+        ax.imshow(self.data, cmap=cmap)
         plt.tight_layout(pad=0)
         plt.axis('off')
         plt.margins(x=0)
@@ -244,6 +247,11 @@ class Display:
         self.UpdateCanvas()
         self.root.mainloop()
 
+
+    def setMap(self, inputArr):
+
+        pass
+
     # inputs one array for both rigs for 30 days of x,y tuples
     def setRigCoords(self, inputArr):
         self.rigCoordsList = inputArr
@@ -284,11 +292,19 @@ def simpleGetArray(path):
 
 
 
+basepath = "C:/Users/cepag/Documents/School/Uni/Competitions/Engineering Competition/CEC 2024/CEC-2024-Programming-Competition/data/"
+world_path = "world_array_data_day_"
+algal_path = "algal_data_day_"
 
 
 
 def test():
     app = Display()
+    
+
+    data = simpleGetArray(basepath + world_path + "1.csv") # ----------- INSERT DATA
+    app.UpdateCanvas(data)
+    
     # list of rig1 list and rig2 list
     app.setRigCoords([[(1,1),(2,2),(3,3),(4,4)],
                       [(50,1),(50,2),(50,3),(50,4)]])
