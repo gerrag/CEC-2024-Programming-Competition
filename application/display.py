@@ -10,7 +10,7 @@ from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.pyplot as plt
 from matplotlib import colors
 from matplotlib import colormaps
-from testDisplay import simpleGetArray
+
 
 import tkinter.font
 
@@ -220,8 +220,7 @@ class Display:
         
         self.rig_one_coords_text.set(f"Rig 1: {self.rig_one_coords}")
         self.rig_two_coords_text.set(f"Rig 2: {self.rig_two_coords}")
-
-        print(f"DAY IS {self.day_selected.get()} and COORDS IS {self.rig_one_coords}")
+        
     
     def _update_metrics(self):
         day = self.day_selected.get()
@@ -279,6 +278,11 @@ def simpleGetArray(path):
                 # data is empty
                 data[int(row[2])][int(row[1])] = None
     return data
+
+
+
+
+
 
 
 def test():
