@@ -19,8 +19,6 @@ from tkinter import *
 import csv
 
 
-import random #DELETE ME AND ALL CASES
-
 
 basepath = "C:/Users/cepag/Documents/School/Uni/Competitions/Engineering Competition/CEC 2024/CEC-2024-Programming-Competition/data/"
 world_path = "world_array_data_day_"
@@ -78,6 +76,8 @@ class Display:
 
         # ----------------------- Initialize Interface -----------------------
         self.interface = Frame(master=self.root)
+        self.interface.config(borderwidth=1)
+
         # ----------------------- Preserve Section -----------------------
         title = Label(master=self.interface, text="Preserve", font="bold")
         title.config(font=self.TITLE_FONT)
@@ -118,6 +118,7 @@ class Display:
 
         # ---------------------------- Metrics --------------------------
         self.metrics = tkinter.Frame(master=self.root)
+        self.metrics.config(borderwidth=1)
 
         # --------------------- Collected ---------------------
         title = Label(master=self.metrics, text="Collected", font="bold")
@@ -187,6 +188,7 @@ class Display:
         
 
         self.canvas = FigureCanvasTkAgg(fig, master=self.root)  # A tk.DrawingArea.
+        # self.canvas.get_tk_widget().config()
         self.canvas.get_tk_widget().pack(side=LEFT, fill=BOTH, expand=0)
 
         
@@ -220,7 +222,7 @@ class Display:
         
         self.rig_one_coords_text.set(f"Rig 1: {self.rig_one_coords}")
         self.rig_two_coords_text.set(f"Rig 2: {self.rig_two_coords}")
-        
+
     
     def _update_metrics(self):
         day = self.day_selected.get()
