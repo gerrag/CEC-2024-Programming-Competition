@@ -20,7 +20,7 @@ MIN_VALUE = float('inf')
 #NOTES: Only interprets cols(?, x, y, value) from a dataset 
 def singleInterpreter(data_file_name, day):
     
-    data_file_name = f"data/{data_file_name}_data_day_{day}.csv"
+    data_file_name = f"../data/{data_file_name}_data_day_{day}.csv"
 
     with open(data_file_name) as data:
         
@@ -47,7 +47,7 @@ def singleInterpreter(data_file_name, day):
             map[y_value][x_value] = value
 
         #Removing Invalid Choices (Land vs Water)
-        #TO BE CONTINUED
+        #
     
 
 #FUNCTION - multiInterpreter
@@ -64,6 +64,4 @@ def singleInterpreter(data_file_name, day):
 #Input - 
 def main(input):
 
-    return 
-
-singleInterpreter("algal", 1)
+    return
