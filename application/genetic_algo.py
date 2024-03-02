@@ -139,9 +139,38 @@ def mutate(individual):
 # parent_2: an individual which will mate with parent_1
 # return: the child individual of parent_1 and parent_2
 def create_child(parent_1, parent_2):
+    new_child = []
+    # define all possible combinations of the two parents' rigs
+    child_combs = [(0,0),(0,1),(1,0),(1,1)]
 
-    return
+    while True:
+        # Choose a combination at random
+        combination = random.randrange(len(child_combs))
+        chosen_comb = child_combs.pop(combination)
 
+        # Validate that the chosen combination is valid
+        valid_comb = True
+        for i in range(len(parent_1[0])):
+            if(not valid_proximity(parent_1[chosen_comb[0]][i], parent_2[chosen_comb[1]][i])):
+                valid_comb = False
+                break
+        
+        # If valid, create child
+        if valid_comb:
+            new_child[0] = parent_1[child_combs[0]].copy()
+            new_child[1] = parent_2[child_combs[1]].copy()
+            break
+        # If no other combinations, return one of the parents at random
+        elif len(chosen_comb) == 0:
+            if random.randint(0,1) == 0:
+                new_child = parent_1
+            else:
+                new_child = parent_2
+
+            break
+    
+    return new_child
+          
 # description: get the valid moves a rig can take from a coordinate
 # coord: the coordinate that the rig is currently situated
 # return: list of valid coordinate moves represented as tuples
