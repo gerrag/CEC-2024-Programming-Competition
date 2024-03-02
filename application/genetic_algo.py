@@ -61,10 +61,58 @@ def calculate_fitness(individual):
 
 # description: mutate an individual, a MUTATIONS number of times
 # individual: the individual to be mutated
-# return: the mutated individual
+# Modifies the original individual object
 def mutate(individual):
 
-    return
+  # Create [MUTATIONS] number of mutations
+  for i in range(MUTATIONS):
+    # Select a random position to mutate
+    positions = 2 * len(individual[0])
+    mut_position = random.randrange(positions)
+
+    valid_positions = []
+    rig = -1
+
+    # Determine rig getting changed
+    if mut_position < len(individual[0]):
+      rig = 0
+    else:
+      rig = 1
+
+    # Determine valid positions
+    mut_position = mut_position % len(individual[rig])
+    if mut_position == 0:
+      valid_positions = valid_moves(individual[rig][1])
+    elif mut_position:
+      valid_positions = valid_moves(individual[rig][28])
+    else:
+      valid_positions = []
+      start = individual[rig][mut_position-1]
+      dest = individual[rig][mut_position+1]
+
+      for x in range(min(start[0], dest[0]), max(start[0], dest[0])):
+        for y in range(min(start[1], dest[1]), max(start[1], dest[1])):
+          valid_positions.append((x,y))
+    
+    # attempt to mutate the individual
+    # this may fail, resulting in a mutation that stays the same
+    while True:
+      new_pos = random.randrange(len(valid_positions))
+      new_tuple = valid_positions[new_pos]
+
+      if on_map(new_tuple) and is_water(new_tuple) and valid_positions(start, new_tuple) and valid_positions(new_tuple, dest):
+          individual[0][mut_position] = new_tuple
+          break
+      else:
+          valid_positions.pop(new_pos)
+          if(len(valid_positions) == 0):
+            break
+
+# description: determines if the given coordinate is placed on the map
+# coord: a tuple representing the coordinates
+# returns a boolean value
+def on_map(coord):
+   return coord[0] < 100 and coord[0] >= 0 and coord[1] < 100 and coord[1] >= 0
 
 # description: create a child individual by mating 2 individuals 
 # parent_1: an individual which will mate with parent_2
