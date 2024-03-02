@@ -19,7 +19,7 @@ class Display:
         self.root = Tk()
         self.root.geometry("1000x600")
         self.root.title("Hector Analysis")
-        self.root.iconbitmap("/assets/mount_icon.ico")
+        self.root.iconbitmap("assets/mount_icon.ico")
 
         self.data = []
     
@@ -157,7 +157,6 @@ class Display:
             pass
 
 
-        
         self._update_coords()
         self._update_metrics()
 
@@ -170,11 +169,20 @@ class Display:
         plt.tight_layout(pad=0)
         plt.axis('off')
         plt.margins(x=0)
+
+
+        # Plot rig one trace
+        plt.plot([day[0] for day in self.rigCoordsList[0]], [day[1] for day in self.rigCoordsList[0]])
+        # Plot rig one
         plt.plot(int(self.rig_one_coords[0]),int(self.rig_one_coords[1]),'ro') 
-        plt.plot(int(self.rig_two_coords[0]),int(self.rig_one_coords[1]),'rx') 
         
         
+        # Plot rig two
         
+        # Plot rig two trace
+        # plt.scatter([day[0] for day in self.rigCoordsList[1]], [day[1] for day in self.rigCoordsList[1]], color='grey', linewidths=2, marker='')
+        plt.plot([day[0] for day in self.rigCoordsList[1]], [day[1] for day in self.rigCoordsList[1]])
+        plt.plot(int(self.rig_two_coords[0]),int(self.rig_two_coords[1]),'rx') 
         self.canvas = FigureCanvasTkAgg(fig, master=self.root)  # A tk.DrawingArea.
         
         self.canvas.get_tk_widget().config(bg='darkgrey')
@@ -269,8 +277,16 @@ class Display:
 
 
 
+
+
+
+
+
+
+
 # ---------------- TEST FUNCTION ERASE ----------------
 import csv  # erase me
+import numpy as np
 
 def simpleGetArray(path):
     reader = csv.reader(open(path), delimiter=",")
@@ -292,12 +308,13 @@ def simpleGetArray(path):
 
 
 
-basepath = "C:/Users/cepag/Documents/School/Uni/Competitions/Engineering Competition/CEC 2024/CEC-2024-Programming-Competition/data/"
+basepath = "../data/"
 world_path = "world_array_data_day_"
 algal_path = "algal_data_day_"
 
 
 
+# test func only shows 4 days
 def test():
     app = Display()
     
@@ -329,5 +346,4 @@ def test():
     app.show()
 
 test()
-
 
