@@ -50,8 +50,33 @@ oil_normalized_dataset = 0 # TODO: ADD COMMENT AND ABRAHAMS INIT CODE
 # description: create a random new individual
 # return: the new individual
 def new_individual():
+    individual = [[],[]]
 
-    return
+    rig_1_move = (random.randint(0,99), random.randint(0,99))
+    rig_2_move = (random.randint(0,99), random.randint(0,99))
+
+    while (not valid_proximity(rig_1_move, rig_2_move)):
+        rig_2_move = (random.randint(0,99), random.randint(0,99))
+
+    individual[0].append(rig_1_move)
+    individual[1].append(rig_2_move)
+
+    for i in range(NUM_DAYS):
+        rig_1_moves = valid_moves(individual[0][i])
+        rig_2_moves = valid_moves(individual[1][i])
+
+        rig_1_move = random.choice(rig_1_moves)
+        rig_2_move = random.choice(rig_2_moves)
+        rig_2_moves.remove(rig_2_move)
+
+        while (not valid_proximity(rig_1_move, rig_2_move)):
+            rig_2_move = random.choice(rig_2_moves)
+            rig_2_moves.remove(rig_2_move)
+
+        individual[0].append(rig_1_move)
+        individual[1].append(rig_2_move)
+
+    return individual
 
 # description: calculate the fitness score of an individual
 # individual: the individual to be fit checked
@@ -114,9 +139,38 @@ def mutate(individual):
 # parent_2: an individual which will mate with parent_1
 # return: the child individual of parent_1 and parent_2
 def create_child(parent_1, parent_2):
+    new_child = []
+    # define all possible combinations of the two parents' rigs
+    child_combs = [(0,0),(0,1),(1,0),(1,1)]
 
-    return
+    while True:
+        # Choose a combination at random
+        combination = random.randrange(len(child_combs))
+        chosen_comb = child_combs.pop(combination)
 
+        # Validate that the chosen combination is valid
+        valid_comb = True
+        for i in range(len(parent_1[0])):
+            if(not valid_proximity(parent_1[chosen_comb[0]][i], parent_2[chosen_comb[1]][i])):
+                valid_comb = False
+                break
+        
+        # If valid, create child
+        if valid_comb:
+            new_child[0] = parent_1[child_combs[0]].copy()
+            new_child[1] = parent_2[child_combs[1]].copy()
+            break
+        # If no other combinations, return one of the parents at random
+        elif len(chosen_comb) == 0:
+            if random.randint(0,1) == 0:
+                new_child = parent_1
+            else:
+                new_child = parent_2
+
+            break
+    
+    return new_child
+          
 # description: get the valid moves a rig can take from a coordinate
 # coord: the coordinate that the rig is currently situated
 # return: list of valid coordinate moves represented as tuples
