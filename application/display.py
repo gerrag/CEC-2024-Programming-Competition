@@ -32,9 +32,9 @@ class Display:
         self.day_selected = IntVar()
         self.day_selected.set(1)
         self.rig_one_coords_text = StringVar()
-        self.rig_one_coords_text.set("Rig 1: (_, _)")
+        self.rig_one_coords_text.set("[X] Rig 1: (_, _)")
         self.rig_two_coords_text = StringVar()
-        self.rig_two_coords_text.set("Rig 2: (_, _)")
+        self.rig_two_coords_text.set("[O] Rig 2: (_, _)")
 
         self.rig_one_coords = (-1, -1)
         self.rig_two_coords = (-1, -1)
@@ -172,19 +172,19 @@ class Display:
 
 
         # Plot rig one trace
-        plt.plot([day[0] for day in self.rigCoordsList[0]], [day[1] for day in self.rigCoordsList[0]])
+        plt.plot([day[0] for day in self.rigCoordsList[0]], [day[1] for day in self.rigCoordsList[0]], 'grey')
         # Plot rig one
-        plt.plot(int(self.rig_one_coords[0]),int(self.rig_one_coords[1]),'ro') 
+        plt.plot(int(self.rig_one_coords[0]),int(self.rig_one_coords[1]),'rx') 
         
-        
-        # Plot rig two
         
         # Plot rig two trace
-        # plt.scatter([day[0] for day in self.rigCoordsList[1]], [day[1] for day in self.rigCoordsList[1]], color='grey', linewidths=2, marker='')
-        plt.plot([day[0] for day in self.rigCoordsList[1]], [day[1] for day in self.rigCoordsList[1]])
-        plt.plot(int(self.rig_two_coords[0]),int(self.rig_two_coords[1]),'rx') 
-        self.canvas = FigureCanvasTkAgg(fig, master=self.root)  # A tk.DrawingArea.
-        
+        plt.plot([day[0] for day in self.rigCoordsList[1]], [day[1] for day in self.rigCoordsList[1]], 'grey')
+        # Plot rig two
+        plt.plot(int(self.rig_two_coords[0]),int(self.rig_two_coords[1]),'ro') 
+
+
+
+        self.canvas = FigureCanvasTkAgg(fig, master=self.root)
         self.canvas.get_tk_widget().config(bg='darkgrey')
         self.canvas.get_tk_widget().pack(side=LEFT, fill=BOTH, expand=0)
 
@@ -225,8 +225,8 @@ class Display:
         self.rig_one_coords = self.rigCoordsList[0][day-1]
         self.rig_two_coords = self.rigCoordsList[1][day-1]
         
-        self.rig_one_coords_text.set(f"Rig 1: {self.rig_one_coords}")
-        self.rig_two_coords_text.set(f"Rig 2: {self.rig_two_coords}")
+        self.rig_one_coords_text.set(f"[X] Rig 1: {self.rig_one_coords}")
+        self.rig_two_coords_text.set(f"[O] Rig 2: {self.rig_two_coords}")
 
     
     def _update_metrics(self):
@@ -269,81 +269,3 @@ class Display:
     # input value
     def setCompromised(self, inputArr):
         self.compromisedList = inputArr
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ---------------- TEST FUNCTION ERASE ----------------
-import csv  # erase me
-import numpy as np
-
-def simpleGetArray(path):
-    reader = csv.reader(open(path), delimiter=",")
-
-    # data = np.array(x).astype = float
-    data = np.zeros((100, 100))
-
-    # Populate data array
-    for i, row in enumerate(reader):
-        if i != 0:
-            # print(row)
-            # y += int(row[1])
-            if row[3] != "":
-                data[int(row[2])][int(row[1])] = float(row[3])
-            else:
-                # data is empty
-                data[int(row[2])][int(row[1])] = None
-    return data
-
-
-
-basepath = "../data/"
-world_path = "world_array_data_day_"
-algal_path = "algal_data_day_"
-
-
-
-# test func only shows 4 days
-def test():
-    app = Display()
-    
-    # Set data (x,y) grid of land (1 land, 0 water)
-    data = simpleGetArray(basepath + world_path + "1.csv")
-    app.UpdateCanvas(data)
-
-    # Set preserved button changed handler
-    def handler(preserving):
-        print("handled! type " + preserving)
-    
-    app.set_presreve_changed_handler(handler)
-    
-    # list of rig1 list and rig2 list for every day
-    app.setRigCoords([[(1,1),(2,2),(3,3),(4,4)],
-                      [(50,1),(50,2),(50,3),(50,4)]])
-    
-    # tuple list of collected by day (helium, metal, oil)
-    app.setCollected([[1,2,3,4],
-                      [11,12,13,14],
-                      [21,22,23,24]])
-
-    # list of compromised by day (algal, coral, species)
-    app.setCompromised([[31,32,33,34],
-                        [41,42,43,44],
-                        [51,52,53,54]])
-
-    # show app
-    app.show()
-
-test()
-
