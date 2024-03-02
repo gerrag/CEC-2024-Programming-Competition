@@ -17,6 +17,7 @@ class Display:
 
         # Initialize window
         self.root = Tk()
+        self.root.geometry("1000x600")
         self.root.wm_title("Hector Analysis")
 
         self.data = []
@@ -172,9 +173,10 @@ class Display:
         plt.plot(int(self.rig_two_coords[0]),int(self.rig_one_coords[1]),'rx') 
         
         
-
+        
         self.canvas = FigureCanvasTkAgg(fig, master=self.root)  # A tk.DrawingArea.
-        # self.canvas.get_tk_widget().config()
+        
+        self.canvas.get_tk_widget().config(bg='darkgrey')
         self.canvas.get_tk_widget().pack(side=LEFT, fill=BOTH, expand=0)
 
     
