@@ -2,7 +2,7 @@
 
 ## 1. How to Run
     1) Install Packages and Python listed below. 
-    2) Navigate to Parent Folder on Windows Machine 
+    2) Navigate to Application Folder on Windows Machine 
     3) Open CMD prompt and run python main.py
 
     Note: Genetic Algorithm requires further debuggging along with integration with the GUI. 
