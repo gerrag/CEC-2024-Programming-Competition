@@ -65,7 +65,10 @@ def new_individual():
     rig_1_move = (random.randint(0,99), random.randint(0,99))
     rig_2_move = (random.randint(0,99), random.randint(0,99))
 
-    while (not valid_proximity(rig_1_move, rig_2_move)):
+    while (not is_water(rig_1_move)):
+        rig_1_move = (random.randint(0,99), random.randint(0,99))
+    
+    while ((not is_water(rig_2_move)) or (not valid_proximity(rig_1_move, rig_2_move))):
         rig_2_move = (random.randint(0,99), random.randint(0,99))
 
     individual[0].append(rig_1_move)
@@ -79,7 +82,7 @@ def new_individual():
         rig_2_move = random.choice(rig_2_moves)
         rig_2_moves.remove(rig_2_move)
 
-        while (not valid_proximity(rig_1_move, rig_2_move)):
+        while ((not is_water(rig_2_move)) or (not valid_proximity(rig_1_move, rig_2_move))):
             rig_2_move = random.choice(rig_2_moves)
             rig_2_moves.remove(rig_2_move)
 
@@ -202,7 +205,8 @@ def valid_moves(coord):
 
     for i in range(-5,6):
         for j in range(-5,6):
-            valid_moves_list.append((coord[0] + i, coord[1] + j))
+            if (on_map((coord[0] + i, coord[1] + j))):
+                valid_moves_list.append((coord[0] + i, coord[1] + j))
 
     for move in valid_moves_list:
         if (not valid_movement(coord, move)):
@@ -253,15 +257,16 @@ def valid_proximity(rig_coord_1, rig_coord_2):
 # coord: the coordinate that the rig is currently situated
 # return: list of valid coordinate moves represented as tuples
 def valid_one_unit_moves(coord):
+    valid_one_unit_moves_list_contenders = []
     valid_one_unit_moves_list = []
 
     for i in range(-1,2):
         for j in range(-1,2):
-            valid_one_unit_moves_list.append((coord[0] + i, coord[1] + j))
+            valid_one_unit_moves_list_contenders.append((coord[0] + i, coord[1] + j))
 
-    for move in valid_one_unit_moves_list:
-        if ((not is_water(move)) or (not on_map(move))):
-            valid_one_unit_moves_list.remove(move)
+    for move in valid_one_unit_moves_list_contenders:
+        if (on_map(move) and is_water(move)):
+            valid_one_unit_moves_list.append(move)
 
     return valid_one_unit_moves_list
 
@@ -283,8 +288,6 @@ if __name__ == "__main__":
     random.seed(RANDOM_SEED)
 
     debug_output_file = open(DEBUG_OUTPUT_FILE, "w")
-    
-    # TODO: Call Abraham's Data init functions based on selected preserve
 
     # init the population
     population = []
