@@ -1,7 +1,13 @@
 # Team Hector CEC 2024 Documentation
 
 ## 1. How to Run
+    1) Install Packages and Python listed below. 
+    2) Navigate to Parent Folder on Windows Machine 
+    3) Open CMD prompt and run python main.py
 
+    Note: Genetic Algorithm requires further debuggging along with integration with the GUI. 
+    The GUI is functional. The data pre-processing is functional. The genetic algorithm is complete but has errors.
+    GUI displays a random generated valid path for showcase.
 
 ## 2. Languages & Versions
 All languages are included as,
@@ -13,8 +19,8 @@ All languages are included as,
     All dependancies are included as,
 
     - Internal Python Imports: csv, os, random, and math, tkinter
-    - NumPY ()
-    - Matplotlib ()
+    - NumPY
+    - Matplotlib
 
 ## 4. References
 
