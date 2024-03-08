@@ -10,6 +10,7 @@
 import numpy as np
 import csv
 import os
+import math
 
 #GLOBAL VARIABLES
 MAX_VALUE = float('-inf')
@@ -53,25 +54,26 @@ def singleInterpreter(data_file, day):
     file_dir = os.path.dirname(__file__)
     file_name = os.path.join(file_dir, f'../data/{data_file}_data_day_{day}.csv')
    
-   #Data List Creation of interpreted file
+    #Data List Creation of interpreted file
     with open(file_name) as data:
         data_list = dataListCreation(data)
-
 
     #Map Creation & Removal of Invalid Values (Land vs Water)
     world = worldArray()
     map = np.zeros(shape=(100,100))
     for row in data_list:
-        #Map Creation
+        #Obtain X and Y
         x_value = int(row[0])
         y_value = int(row[1])
 
+        #Obtain Value 
         value = row[2]
         if value == '':
             value = 0
         else:
             value = float(value)
 
+        #Assign Value
         map[y_value][x_value] = value
 
     #Removal of Invalid Values & Keep Track of MAX_VAL AND MIN_VAL
@@ -81,11 +83,11 @@ def singleInterpreter(data_file, day):
         land_water = int(row[2])
 
         if (land_water == 1):
-            map[y_value][x_value] = -1
+            map[y_value][x_value] = None
         else: 
-            if (map[y_value][x_value] >= MAX_VALUE):
+            if (map[y_value][x_value] > MAX_VALUE):
                 MAX_VALUE = map[y_value][x_value]
-            elif (map[y_value][x_value] <= MIN_VALUE):
+            elif (map[y_value][x_value] < MIN_VALUE):
                 MIN_VALUE = map[y_value][x_value]
 
     return map
@@ -109,9 +111,10 @@ def multiInterpreter(data_file):
         for j in range(0 , len(dataframe[i])):
             for k in range(0, len(dataframe[i][j])):
                 value = dataframe[i][j][k]
-                if value != -1:
+                if math.isnan(value) == False:
                     dataframe[i][j][k] = (value - MIN_VALUE)/difference
-
+                else:
+                    dataframe[i][j][k] = -1
 
     return dataframe
 
